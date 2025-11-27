@@ -1,12 +1,19 @@
-name: Run Pytest for Prim MST
+name: Autograding Tests
 
 on:
   push:
   pull_request:
+  repository_dispatch:
+
+permissions:
+  checks: write
+  actions: read
+  contents: read
 
 jobs:
   run-tests:
     runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
 
     steps:
       - name: Checkout code
@@ -24,7 +31,8 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Add project root to PYTHONPATH
-        run: echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
+        run: |
+          echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
 
       - name: Run pytest
-        run: pytest -q --disable-warnings --maxfail=1
+        run: pytest -q
